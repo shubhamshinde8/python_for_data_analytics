@@ -7,3 +7,16 @@ msg=input("Enter msg that you want to print ")
 
 for i in range(a):
     print(msg)
+
+
+
+
+
+
+
+
+
+
+
+
+
