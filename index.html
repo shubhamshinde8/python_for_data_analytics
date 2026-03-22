@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HarvestFresh — Farm to Your Door</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #2d6a4f;
+    --green-light: #52b788;
+    --green-pale: #d8f3dc;
+    --orange: #f4a261;
+    --orange-dark: #e76f51;
+    --cream: #fefae0;
+    --brown: #6b4226;
+    --dark: #1a1a2e;
+    --text: #2c2c2c;
+    --text-light: #6b7280;
+    --white: #ffffff;
+    --shadow: 0 8px 32px rgba(45,106,79,0.13);
+    --radius: 18px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(254,250,224,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(82,183,136,0.18);
+    padding: 0 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 72px;
+    transition: box-shadow .3s;
+  }
+  header.scrolled { box-shadow: 0 4px 24px rgba(45,106,79,0.10); }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; font-weight: 900;
+    color: var(--green);
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .logo span { color: var(--orange-dark); }
+  nav { display: flex; gap: 32px; align-items: center; }
+  nav a {
+    color: var(--text); font-size: .93rem; font-weight: 500;
+    text-decoration: none; position: relative;
+    transition: color .2s;
+  }
+  nav a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 2px; background: var(--green-light);
+    transform: scaleX(0); transition: transform .3s;
+  }
+  nav a:hover { color: var(--green); }
+  nav a:hover::after { transform: scaleX(1); }
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 10px 22px; border-radius: 50px;
+    font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 600;
+    cursor: pointer; transition: all .25s; text-decoration: none; border: none;
+  }
+  .btn-primary {
+    background: var(--green); color: #fff;
+    box-shadow: 0 4px 16px rgba(45,106,79,0.28);
+  }
+  .btn-primary:hover { background: #1b4d36; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45,106,79,0.35); }
+  .btn-outline {
+    background: transparent; color: var(--green);
+    border: 2px solid var(--green);
+  }
+  .btn-outline:hover { background: var(--green); color: #fff; }
+  .cart-btn {
+    position: relative; background: var(--green-pale);
+    border: none; width: 44px; height: 44px; border-radius: 12px;
+    cursor: pointer; display: grid; place-items: center;
+    font-size: 1.2rem; transition: all .2s;
+  }
+  .cart-btn:hover { background: var(--green); color: #fff; transform: scale(1.05); }
+  .cart-count {
+    position: absolute; top: -6px; right: -6px;
+    background: var(--orange-dark); color: #fff;
+    font-size: .65rem; font-weight: 700;
+    width: 18px; height: 18px; border-radius: 50%;
+    display: grid; place-items: center;
+  }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 24px; height: 2.5px; background: var(--green); border-radius: 2px; transition: all .3s; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    padding: 90px 5% 60px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center; gap: 60px;
+    background: linear-gradient(135deg, var(--cream) 0%, #e9f5e9 100%);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -120px; right: -120px;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(82,183,136,0.18) 0%, transparent 70%);
+    animation: pulse 6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-pale); color: var(--green);
+    padding: 6px 16px; border-radius: 50px; font-size: .82rem; font-weight: 600;
+    margin-bottom: 20px; border: 1px solid rgba(82,183,136,0.35);
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900; line-height: 1.12;
+    color: var(--dark); margin-bottom: 20px;
+  }
+  .hero h1 em { color: var(--green); font-style: normal; }
+  .hero p {
+    font-size: 1.05rem; color: var(--text-light); line-height: 1.8;
+    max-width: 480px; margin-bottom: 36px;
+  }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+  .hero-stats {
+    display: flex; gap: 32px; margin-top: 48px;
+    padding-top: 32px; border-top: 1px solid rgba(0,0,0,0.08);
+  }
+  .stat { text-align: center; }
+  .stat strong {
+    display: block; font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; color: var(--green); font-weight: 900;
+  }
+  .stat span { font-size: .82rem; color: var(--text-light); }
+  .hero-visual {
+    position: relative; display: grid;
+    grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .hero-img-card {
+    border-radius: var(--radius); overflow: hidden;
+    box-shadow: var(--shadow); position: relative;
+    transition: transform .35s;
+  }
+  .hero-img-card:hover { transform: translateY(-6px) scale(1.02); }
+  .hero-img-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+  .hero-img-card:first-child { grid-row: span 2; }
+  .hero-img-card:first-child img { height: 100%; }
+  .float-badge {
+    position: absolute; bottom: 12px; left: 12px;
+    background: rgba(255,255,255,0.93); backdrop-filter: blur(8px);
+    padding: 6px 12px; border-radius: 50px; font-size: .75rem; font-weight: 600;
+    color: var(--green); display: flex; align-items: center; gap: 5px;
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-strip {
+    background: var(--green); color: #fff;
+    padding: 13px 0; overflow: hidden;
+    white-space: nowrap;
+  }
+  .marquee-inner {
+    display: inline-block;
+    animation: marquee 18s linear infinite;
+  }
+  .marquee-inner span {
+    margin: 0 32px; font-size: .9rem; font-weight: 500; opacity: .9;
+  }
+  .marquee-inner span::before { content: '🌿  '; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── SECTION ── */
+  section { padding: 80px 5%; }
+  .section-header { text-align: center; margin-bottom: 52px; }
+  .section-label {
+    display: inline-block; font-size: .8rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--green); margin-bottom: 12px;
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 900;
+    line-height: 1.2; color: var(--dark);
+  }
+  .section-header p { color: var(--text-light); margin-top: 12px; font-size: 1rem; }
+
+  /* ── CATEGORIES ── */
+  .categories { background: var(--white); }
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+  }
+  .cat-card {
+    background: var(--cream); border-radius: var(--radius);
+    padding: 24px 12px; text-align: center;
+    cursor: pointer; transition: all .25s;
+    border: 2px solid transparent;
+  }
+  .cat-card:hover, .cat-card.active {
+    background: var(--green-pale); border-color: var(--green-light);
+    transform: translateY(-4px); box-shadow: var(--shadow);
+  }
+  .cat-icon { font-size: 2.4rem; margin-bottom: 8px; }
+  .cat-card p { font-size: .85rem; font-weight: 600; color: var(--text); }
+  .cat-card span { font-size: .75rem; color: var(--text-light); }
+
+  /* ── PRODUCTS ── */
+  .products-section { background: var(--cream); }
+  .filter-bar {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 36px;
+    justify-content: center;
+  }
+  .filter-btn {
+    padding: 8px 20px; border-radius: 50px; border: 2px solid #e5e7eb;
+    background: var(--white); font-size: .87rem; font-weight: 500;
+    cursor: pointer; transition: all .22s; color: var(--text);
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--green); border-color: var(--green); color: #fff;
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+  }
+  .product-card {
+    background: var(--white); border-radius: var(--radius);
+    overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    transition: all .3s; cursor: pointer;
+    position: relative;
+  }
+  .product-card:hover { transform: translateY(-8px); box-shadow: 0 16px 40px rgba(45,106,79,0.18); }
+  .product-img {
+    width: 100%; height: 200px; object-fit: cover;
+    display: block; transition: transform .4s;
+  }
+  .product-card:hover .product-img { transform: scale(1.04); }
+  .product-img-wrap { overflow: hidden; position: relative; }
+  .product-tag {
+    position: absolute; top: 12px; left: 12px;
+    background: var(--orange); color: #fff;
+    padding: 3px 10px; border-radius: 50px; font-size: .72rem; font-weight: 700;
+  }
+  .wishlist-btn {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(255,255,255,0.9); border: none;
+    width: 34px; height: 34px; border-radius: 50%;
+    display: grid; place-items: center; cursor: pointer;
+    font-size: 1rem; transition: all .2s;
+  }
+  .wishlist-btn:hover { background: #ffe4e1; transform: scale(1.1); }
+  .product-body { padding: 16px 18px 20px; }
+  .product-category { font-size: .72rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .05em; }
+  .product-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin: 4px 0 8px; color: var(--dark); }
+  .product-weight { font-size: .8rem; color: var(--text-light); }
+  .product-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 14px;
+  }
+  .product-price { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; color: var(--green); }
+  .product-price span { font-size: .8rem; color: var(--text-light); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+  .add-btn {
+    background: var(--green); color: #fff; border: none;
+    width: 38px; height: 38px; border-radius: 10px;
+    display: grid; place-items: center; cursor: pointer;
+    font-size: 1.3rem; transition: all .2s;
+  }
+  .add-btn:hover { background: var(--orange-dark); transform: scale(1.1); }
+  .qty-control {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .qty-control button {
+    background: var(--green-pale); border: none;
+    width: 30px; height: 30px; border-radius: 8px;
+    cursor: pointer; font-size: 1rem; font-weight: 700; color: var(--green);
+    transition: background .2s;
+  }
+  .qty-control button:hover { background: var(--green); color: #fff; }
+  .qty-control span { font-weight: 700; min-width: 18px; text-align: center; }
+
+  /* ── DAILY DEALS ── */
+  .deals { background: linear-gradient(135deg, #1a3c2a 0%, #2d6a4f 100%); color: #fff; }
+  .deals .section-label { color: var(--orange); }
+  .deals .section-header h2 { color: #fff; }
+  .deals .section-header p { color: rgba(255,255,255,0.7); }
+  .deals-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .deal-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius); padding: 20px;
+    display: flex; align-items: center; gap: 16px;
+    transition: all .3s;
+  }
+  .deal-card:hover { background: rgba(255,255,255,0.14); transform: translateY(-4px); }
+  .deal-img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
+  .deal-info { flex: 1; }
+  .deal-name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+  .deal-prices { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+  .deal-new { font-size: 1.2rem; font-weight: 900; color: var(--orange); }
+  .deal-old { font-size: .85rem; color: rgba(255,255,255,0.5); text-decoration: line-through; }
+  .deal-save {
+    background: var(--orange); color: #fff;
+    font-size: .72rem; font-weight: 700;
+    padding: 2px 8px; border-radius: 50px;
+  }
+  .deal-timer { font-size: .75rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
+  .deal-timer strong { color: var(--orange); font-size: .9rem; }
+
+  /* ── WHY US ── */
+  .why { background: var(--white); }
+  .why-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 28px;
+  }
+  .why-card {
+    padding: 32px 24px; border-radius: var(--radius);
+    background: var(--cream); text-align: center;
+    transition: all .3s;
+  }
+  .why-card:hover { background: var(--green); color: #fff; transform: translateY(-6px); }
+  .why-card:hover .why-title, .why-card:hover .why-desc { color: #fff; }
+  .why-icon {
+    font-size: 2.5rem; margin-bottom: 16px;
+    display: block;
+  }
+  .why-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
+  .why-desc { font-size: .88rem; color: var(--text-light); line-height: 1.7; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials { background: var(--cream); }
+  .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 24px; }
+  .review-card {
+    background: var(--white); border-radius: var(--radius);
+    padding: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    transition: transform .3s;
+  }
+  .review-card:hover { transform: translateY(-5px); }
+  .stars { color: #f59e0b; font-size: 1rem; margin-bottom: 12px; }
+  .review-text { font-size: .93rem; color: var(--text); line-height: 1.8; margin-bottom: 20px; font-style: italic; }
+  .reviewer { display: flex; align-items: center; gap: 12px; }
+  .reviewer-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--green-pale); display: grid; place-items: center;
+    font-size: 1.3rem;
+  }
+  .reviewer-name { font-weight: 700; font-size: .9rem; }
+  .reviewer-loc { font-size: .78rem; color: var(--text-light); }
+
+  /* ── NEWSLETTER ── */
+  .newsletter {
+    background: var(--green); color: #fff; text-align: center;
+    padding: 72px 5%;
+  }
+  .newsletter h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 900; margin-bottom: 12px; }
+  .newsletter p { color: rgba(255,255,255,0.75); margin-bottom: 36px; font-size: 1rem; }
+  .newsletter-form { display: flex; gap: 0; max-width: 480px; margin: 0 auto; }
+  .newsletter-form input {
+    flex: 1; padding: 14px 20px; border: none; border-radius: 50px 0 0 50px;
+    font-family: 'DM Sans', sans-serif; font-size: .95rem; outline: none;
+  }
+  .newsletter-form button {
+    background: var(--orange-dark); color: #fff; border: none;
+    padding: 14px 28px; border-radius: 0 50px 50px 0;
+    font-family: 'DM Sans', sans-serif; font-size: .95rem; font-weight: 700;
+    cursor: pointer; transition: background .2s;
+  }
+  .newsletter-form button:hover { background: #c9563b; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark); color: rgba(255,255,255,0.7);
+    padding: 60px 5% 28px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .footer-brand p { font-size: .87rem; line-height: 1.8; margin: 14px 0 20px; }
+  .footer-social { display: flex; gap: 10px; }
+  .social-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    display: grid; place-items: center; font-size: .95rem;
+    transition: background .2s; text-decoration: none; color: #fff;
+  }
+  .social-icon:hover { background: var(--green); }
+  .footer-col h4 { color: #fff; font-weight: 700; margin-bottom: 16px; font-size: .95rem; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 8px; }
+  .footer-col ul li a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: .87rem; transition: color .2s; }
+  .footer-col ul li a:hover { color: var(--green-light); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; }
+  .footer-bottom p { font-size: .82rem; }
+
+  /* ── CART PANEL ── */
+  .cart-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    z-index: 200; opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .cart-overlay.open { opacity: 1; pointer-events: all; }
+  .cart-panel {
+    position: fixed; top: 0; right: -420px; width: 400px; max-width: 95vw;
+    height: 100vh; background: var(--white); z-index: 201;
+    transition: right .35s cubic-bezier(.4,0,.2,1);
+    display: flex; flex-direction: column;
+    box-shadow: -8px 0 40px rgba(0,0,0,0.15);
+  }
+  .cart-overlay.open .cart-panel { right: 0; }
+  .cart-header {
+    padding: 20px 24px; border-bottom: 1px solid #f0f0f0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cart-header h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; }
+  .close-cart {
+    background: var(--cream); border: none;
+    width: 36px; height: 36px; border-radius: 50%;
+    cursor: pointer; font-size: 1.1rem; transition: background .2s;
+  }
+  .close-cart:hover { background: #f0f0f0; }
+  .cart-items { flex: 1; overflow-y: auto; padding: 16px 24px; }
+  .cart-item {
+    display: flex; gap: 14px; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid #f5f5f5;
+  }
+  .cart-item img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-weight: 700; font-size: .9rem; margin-bottom: 2px; }
+  .cart-item-price { color: var(--green); font-weight: 600; font-size: .88rem; }
+  .remove-item { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1.1rem; transition: color .2s; }
+  .remove-item:hover { color: var(--orange-dark); }
+  .cart-footer {
+    padding: 20px 24px; border-top: 1px solid #f0f0f0;
+  }
+  .cart-total { display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 1rem; }
+  .cart-total strong { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--green); }
+  .cart-empty { text-align: center; padding: 60px 20px; color: var(--text-light); }
+  .cart-empty .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--dark); color: #fff;
+    padding: 12px 24px; border-radius: 50px; font-size: .9rem; font-weight: 500;
+    z-index: 300; transition: transform .35s cubic-bezier(.4,0,.2,1);
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── MOBILE ── */
+  @media(max-width: 900px) {
+    .hero { grid-template-columns: 1fr; text-align: center; padding-top: 100px; }
+    .hero p { margin: 0 auto 36px; }
+    .hero-actions { justify-content: center; }
+    .hero-stats { justify-content: center; }
+    .hero-visual { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    nav { display: none; }
+    .hamburger { display: flex; }
+  }
+  @media(max-width: 600px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .newsletter-form { flex-direction: column; }
+    .newsletter-form input { border-radius: 50px; }
+    .newsletter-form button { border-radius: 50px; }
+    .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  }
+  /* mobile nav */
+  .mobile-nav {
+    position: fixed; inset: 0; background: var(--white); z-index: 150;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 32px; transform: translateX(-100%); transition: transform .35s;
+  }
+  .mobile-nav.open { transform: translateX(0); }
+  .mobile-nav a { font-size: 1.5rem; font-weight: 700; color: var(--dark); text-decoration: none; font-family: 'Playfair Display', serif; }
+  .mobile-nav a:hover { color: var(--green); }
+  .close-nav { position: absolute; top: 24px; right: 24px; background: none; border: none; font-size: 1.6rem; cursor: pointer; }
+
+  /* Scroll animations */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .6s, transform .6s; }
+  .reveal.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <a href="#" class="logo">🌿 Harvest<span>Fresh</span></a>
+  <nav>
+    <a href="#categories">Categories</a>
+    <a href="#products">Shop</a>
+    <a href="#deals">Deals</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="cart-btn" onclick="toggleCart()" aria-label="Cart">
+      🛒
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <div class="hamburger" onclick="toggleMobileNav()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="close-nav" onclick="toggleMobileNav()">✕</button>
+  <a href="#categories" onclick="toggleMobileNav()">Categories</a>
+  <a href="#products" onclick="toggleMobileNav()">Shop</a>
+  <a href="#deals" onclick="toggleMobileNav()">Deals</a>
+  <a href="#about" onclick="toggleMobileNav()">About</a>
+  <a href="#contact" onclick="toggleMobileNav()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="hero-badge">🌱 100% Organic & Fresh Daily</div>
+    <h1>Fresh <em>Vegetables</em><br>Delivered to Your Door</h1>
+    <p>Get the freshest farm-harvested vegetables and daily essentials delivered straight to your kitchen. Quality guaranteed, prices you'll love.</p>
+    <div class="hero-actions">
+      <a href="#products" class="btn btn-primary">🛒 Shop Now</a>
+      <a href="#deals" class="btn btn-outline">Today's Deals</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><strong>500+</strong><span>Products</span></div>
+      <div class="stat"><strong>10K+</strong><span>Happy Customers</span></div>
+      <div class="stat"><strong>30min</strong><span>Delivery</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-img-card">
+      <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&q=80" alt="Fresh Vegetables">
+      <div class="float-badge">🥦 Freshly Harvested</div>
+    </div>
+    <div class="hero-img-card">
+      <img src="https://images.unsplash.com/photo-1601493700631-2851e5d3b2a7?w=400&q=80" alt="Tomatoes">
+      <div class="float-badge">🍅 Organic</div>
+    </div>
+    <div class="hero-img-card">
+      <img src="https://images.unsplash.com/photo-1518843875459-f738682238a6?w=400&q=80" alt="Carrots">
+      <div class="float-badge">🥕 Farm Fresh</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <span>Spinach</span><span>Tomatoes</span><span>Carrots</span><span>Onions</span><span>Potatoes</span><span>Broccoli</span><span>Cauliflower</span><span>Cucumber</span><span>Green Peas</span><span>Coriander</span><span>Mint Leaves</span><span>Garlic</span><span>Ginger</span><span>Lemon</span><span>Capsicum</span>
+    <span>Spinach</span><span>Tomatoes</span><span>Carrots</span><span>Onions</span><span>Potatoes</span><span>Broccoli</span><span>Cauliflower</span><span>Cucumber</span><span>Green Peas</span><span>Coriander</span><span>Mint Leaves</span><span>Garlic</span><span>Ginger</span><span>Lemon</span><span>Capsicum</span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories" id="categories">
+  <div class="section-header reveal">
+    <div class="section-label">Browse By</div>
+    <h2>Shop by Category</h2>
+    <p>Find everything you need, organized for your convenience</p>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-card active reveal" onclick="filterProducts('all')">
+      <div class="cat-icon">🥗</div>
+      <p>All Items</p>
+      <span>50+ items</span>
+    </div>
+    <div class="cat-card reveal" onclick="filterProducts('leafy')">
+      <div class="cat-icon">🥬</div>
+      <p>Leafy Greens</p>
+      <span>12 items</span>
+    </div>
+    <div class="cat-card reveal" onclick="filterProducts('roots')">
+      <div class="cat-icon">🥕</div>
+      <p>Root Veggies</p>
+      <span>8 items</span>
+    </div>
+    <div class="cat-card reveal" onclick="filterProducts('fruits')">
+      <div class="cat-icon">🍅</div>
+      <p>Fruit Veggies</p>
+      <span>10 items</span>
+    </div>
+    <div class="cat-card reveal" onclick="filterProducts('herbs')">
+      <div class="cat-icon">🌿</div>
+      <p>Herbs & Spices</p>
+      <span>15 items</span>
+    </div>
+    <div class="cat-card reveal" onclick="filterProducts('daily')">
+      <div class="cat-icon">🥛</div>
+      <p>Daily Essentials</p>
+      <span>20 items</span>
+    </div>
+    <div class="cat-card reveal" onclick="filterProducts('fruits')">
+      <div class="cat-icon">🫑</div>
+      <p>Exotic Veggies</p>
+      <span>9 items</span>
+    </div>
+    <div class="cat-card reveal" onclick="filterProducts('daily')">
+      <div class="cat-icon">🥚</div>
+      <p>Eggs & Dairy</p>
+      <span>6 items</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products-section" id="products">
+  <div class="section-header reveal">
+    <div class="section-label">Our Products</div>
+    <h2>Fresh From the Farm</h2>
+    <p>Handpicked daily for maximum freshness and nutrition</p>
+  </div>
+  <div class="filter-bar reveal">
+    <button class="filter-btn active" onclick="filterProducts('all', this)">All</button>
+    <button class="filter-btn" onclick="filterProducts('leafy', this)">Leafy Greens</button>
+    <button class="filter-btn" onclick="filterProducts('roots', this)">Root Veggies</button>
+    <button class="filter-btn" onclick="filterProducts('fruits', this)">Fruit Veggies</button>
+    <button class="filter-btn" onclick="filterProducts('herbs', this)">Herbs</button>
+    <button class="filter-btn" onclick="filterProducts('daily', this)">Daily Needs</button>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<!-- DAILY DEALS -->
+<section class="deals" id="deals">
+  <div class="section-header reveal">
+    <div class="section-label">⚡ Flash Sales</div>
+    <h2>Today's Best Deals</h2>
+    <p>Limited time offers — grab them before they're gone!</p>
+  </div>
+  <div class="deals-grid" id="dealsGrid"></div>
+</section>
+
+<!-- WHY US -->
+<section class="why" id="about">
+  <div class="section-header reveal">
+    <div class="section-label">Why Choose Us</div>
+    <h2>The HarvestFresh Promise</h2>
+  </div>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <span class="why-icon">🚜</span>
+      <div class="why-title">Direct From Farms</div>
+      <div class="why-desc">We partner directly with local farmers to bring you the freshest produce, harvested the same morning.</div>
+    </div>
+    <div class="why-card reveal">
+      <span class="why-icon">⚡</span>
+      <div class="why-title">Express Delivery</div>
+      <div class="why-desc">Get your groceries delivered within 30 minutes anywhere in the city — guaranteed.</div>
+    </div>
+    <div class="why-card reveal">
+      <span class="why-icon">💚</span>
+      <div class="why-title">100% Organic</div>
+      <div class="why-desc">All our vegetables are certified organic with no pesticides or harmful chemicals used.</div>
+    </div>
+    <div class="why-card reveal">
+      <span class="why-icon">💰</span>
+      <div class="why-title">Best Prices</div>
+      <div class="why-desc">We cut out the middlemen to offer you market-beating prices every single day.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-header reveal">
+    <div class="section-label">Happy Customers</div>
+    <h2>What People Are Saying</h2>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"The vegetables are always incredibly fresh. I ordered broccoli and spinach and they looked like they were just picked from the garden. Delivery was super fast too!"</p>
+      <div class="reviewer"><div class="reviewer-avatar">👩</div><div><div class="reviewer-name">Priya Sharma</div><div class="reviewer-loc">📍 Mumbai</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Best quality vegetables I've ever ordered online. The prices are fair and my kids actually love eating greens now. Will never go back to the supermarket!"</p>
+      <div class="reviewer"><div class="reviewer-avatar">👨</div><div><div class="reviewer-name">Rahul Mehta</div><div class="reviewer-loc">📍 Pune</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Fantastic service! The daily essentials bundle is perfect for our family. Everything arrives neatly packed and super fresh. HarvestFresh is now our go-to!"</p>
+      <div class="reviewer"><div class="reviewer-avatar">👩</div><div><div class="reviewer-name">Anjali Patil</div><div class="reviewer-loc">📍 Navi Mumbai</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter" id="contact">
+  <h2>🌿 Get Fresh Deals in Your Inbox</h2>
+  <p>Subscribe for weekly offers, new arrivals, and seasonal recipes</p>
+  <form class="newsletter-form" onsubmit="subscribe(event)">
+    <input type="email" placeholder="Enter your email address..." required>
+    <button type="submit">Subscribe</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo" style="font-size:1.5rem;">🌿 Harvest<span style="color:var(--orange-dark)">Fresh</span></div>
+      <p>Your trusted partner for fresh, organic vegetables and daily essentials. Bringing the farm directly to your table since 2020.</p>
+      <div class="footer-social">
+        <a href="#" class="social-icon">📘</a>
+        <a href="#" class="social-icon">📸</a>
+        <a href="#" class="social-icon">🐦</a>
+        <a href="#" class="social-icon">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#products">Shop</a></li>
+        <li><a href="#deals">Today's Deals</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="#">Leafy Greens</a></li>
+        <li><a href="#">Root Vegetables</a></li>
+        <li><a href="#">Fruit Vegetables</a></li>
+        <li><a href="#">Herbs & Spices</a></li>
+        <li><a href="#">Daily Essentials</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact Us</h4>
+      <ul>
+        <li><a href="#">📍 Uran, Maharashtra</a></li>
+        <li><a href="#">📞 +91 98765 43210</a></li>
+        <li><a href="#">✉️ hello@harvestfresh.in</a></li>
+        <li><a href="#">🕐 7AM – 9PM Daily</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 HarvestFresh. All rights reserved.</p>
+    <p>Made with 💚 in Maharashtra, India</p>
+  </div>
+</footer>
+
+<!-- CART PANEL -->
+<div class="cart-overlay" id="cartOverlay" onclick="handleOverlayClick(event)">
+  <div class="cart-panel" id="cartPanel">
+    <div class="cart-header">
+      <h3>🛒 Your Cart</h3>
+      <button class="close-cart" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer" id="cartFooter"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Added to cart!</div>
+
+<script>
+// ── DATA ──
+const products = [
+  { id:1, name:'Fresh Spinach', cat:'leafy', price:25, unit:'bunch', img:'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&q=80', tag:'Organic' },
+  { id:2, name:'Ripe Tomatoes', cat:'fruits', price:40, unit:'kg', img:'https://images.unsplash.com/photo-1546094096-0df4bcabd337?w=400&q=80', tag:'Fresh' },
+  { id:3, name:'Carrots', cat:'roots', price:35, unit:'kg', img:'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&q=80', tag:'Farm Fresh' },
+  { id:4, name:'Broccoli', cat:'leafy', price:60, unit:'head', img:'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=400&q=80', tag:'Organic' },
+  { id:5, name:'Onions', cat:'roots', price:30, unit:'kg', img:'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&q=80', tag:'Fresh' },
+  { id:6, name:'Cucumber', cat:'fruits', price:20, unit:'piece', img:'https://images.unsplash.com/photo-1604977042946-1eecc30f269e?w=400&q=80', tag:'Organic' },
+  { id:7, name:'Fresh Coriander', cat:'herbs', price:10, unit:'bunch', img:'https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=400&q=80', tag:'Fresh' },
+  { id:8, name:'Potatoes', cat:'roots', price:28, unit:'kg', img:'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&q=80', tag:'Farm Fresh' },
+  { id:9, name:'Green Capsicum', cat:'fruits', price:45, unit:'kg', img:'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=400&q=80', tag:'Organic' },
+  { id:10, name:'Full Cream Milk', cat:'daily', price:55, unit:'litre', img:'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&q=80', tag:'Daily' },
+  { id:11, name:'Farm Eggs (12)', cat:'daily', price:90, unit:'dozen', img:'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400&q=80', tag:'Farm Fresh' },
+  { id:12, name:'Mint Leaves', cat:'herbs', price:8, unit:'bunch', img:'https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?w=400&q=80', tag:'Fresh' },
+];
+
+const deals = [
+  { name:'Cauliflower', oldPrice:60, newPrice:40, img:'https://images.unsplash.com/photo-1568584711271-6c929fb49b60?w=200&q=80', endTime: Date.now() + 3*60*60*1000 },
+  { name:'Ladyfinger (Bhindi)', oldPrice:50, newPrice:30, img:'https://images.unsplash.com/photo-1518977956812-cd3dbadaaf31?w=200&q=80', endTime: Date.now() + 5*60*60*1000 },
+  { name:'Ginger (250g)', oldPrice:25, newPrice:15, img:'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=200&q=80', endTime: Date.now() + 2*60*60*1000 },
+  { name:'Garlic (200g)', oldPrice:30, newPrice:18, img:'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=200&q=80', endTime: Date.now() + 4*60*60*1000 },
+  { name:'Lemon (6 pcs)', oldPrice:20, newPrice:12, img:'https://images.unsplash.com/photo-1582804337975-b2b284acf0ea?w=200&q=80', endTime: Date.now() + 6*60*60*1000 },
+  { name:'Paneer (200g)', oldPrice:80, newPrice:55, img:'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=200&q=80', endTime: Date.now() + 3.5*60*60*1000 },
+];
+
+let cart = {};
+let currentFilter = 'all';
+
+// ── RENDER PRODUCTS ──
+function renderProducts(filter = 'all') {
+  const grid = document.getElementById('productsGrid');
+  const filtered = filter === 'all' ? products : products.filter(p => p.cat === filter);
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-card" data-cat="${p.cat}">
+      <div class="product-img-wrap">
+        <img class="product-img" src="${p.img}" alt="${p.name}" loading="lazy">
+        <div class="product-tag">${p.tag}</div>
+        <button class="wishlist-btn" onclick="wishlist(${p.id})">🤍</button>
+      </div>
+      <div class="product-body">
+        <div class="product-category">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-weight">per ${p.unit}</div>
+        <div class="product-footer">
+          <div class="product-price">₹${p.price} <span>/ ${p.unit}</span></div>
+          <div id="ctrl-${p.id}">
+            <button class="add-btn" onclick="addToCart(${p.id})">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  // re-update qty controls
+  Object.keys(cart).forEach(id => updateQtyUI(parseInt(id)));
+}
+
+// ── RENDER DEALS ──
+function renderDeals() {
+  const grid = document.getElementById('dealsGrid');
+  grid.innerHTML = deals.map((d,i) => {
+    const pct = Math.round((d.oldPrice - d.newPrice)/d.oldPrice*100);
+    return `
+    <div class="deal-card reveal">
+      <img class="deal-img" src="${d.img}" alt="${d.name}" loading="lazy">
+      <div class="deal-info">
+        <div class="deal-name">${d.name}</div>
+        <div class="deal-prices">
+          <span class="deal-new">₹${d.newPrice}</span>
+          <span class="deal-old">₹${d.oldPrice}</span>
+          <span class="deal-save">-${pct}%</span>
+        </div>
+        <div class="deal-timer">Ends in: <strong id="timer-${i}">--:--:--</strong></div>
+      </div>
+    </div>`;
+  }).join('');
+  startTimers();
+}
+
+// ── TIMERS ──
+function startTimers() {
+  setInterval(() => {
+    deals.forEach((d,i) => {
+      const el = document.getElementById(`timer-${i}`);
+      if (!el) return;
+      const diff = d.endTime - Date.now();
+      if (diff <= 0) { el.textContent = 'Expired'; return; }
+      const h = Math.floor(diff/3600000).toString().padStart(2,'0');
+      const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
+      const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
+      el.textContent = `${h}:${m}:${s}`;
+    });
+  }, 1000);
+}
+
+// ── CART ──
+function addToCart(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  updateQtyUI(id);
+  updateCartCount();
+  showToast('🛒 Added to cart!');
+}
+function updateQtyUI(id) {
+  const ctrl = document.getElementById(`ctrl-${id}`);
+  if (!ctrl) return;
+  const qty = cart[id] || 0;
+  if (qty === 0) {
+    ctrl.innerHTML = `<button class="add-btn" onclick="addToCart(${id})">+</button>`;
+  } else {
+    ctrl.innerHTML = `
+      <div class="qty-control">
+        <button onclick="decreaseQty(${id})">−</button>
+        <span>${qty}</span>
+        <button onclick="addToCart(${id})">+</button>
+      </div>`;
+  }
+}
+function decreaseQty(id) {
+  if (cart[id] > 1) { cart[id]--; }
+  else { delete cart[id]; }
+  updateQtyUI(id);
+  updateCartCount();
+  renderCartPanel();
+}
+function updateCartCount() {
+  const total = Object.values(cart).reduce((a,b) => a+b, 0);
+  document.getElementById('cartCount').textContent = total;
+}
+function toggleCart() {
+  document.getElementById('cartOverlay').classList.toggle('open');
+  renderCartPanel();
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('cartOverlay')) toggleCart();
+}
+function renderCartPanel() {
+  const container = document.getElementById('cartItems');
+  const footer = document.getElementById('cartFooter');
+  const ids = Object.keys(cart).filter(id => cart[id] > 0);
+  if (ids.length === 0) {
+    container.innerHTML = `<div class="cart-empty"><div class="empty-icon">🛒</div><p>Your cart is empty</p></div>`;
+    footer.innerHTML = '';
+    return;
+  }
+  container.innerHTML = ids.map(id => {
+    const p = products.find(x => x.id == id);
+    if (!p) return '';
+    return `
+    <div class="cart-item">
+      <img src="${p.img}" alt="${p.name}">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${p.name}</div>
+        <div class="cart-item-price">₹${p.price} × ${cart[id]} = ₹${p.price*cart[id]}</div>
+      </div>
+      <button class="remove-item" onclick="removeFromCart(${id})">🗑</button>
+    </div>`;
+  }).join('');
+  const subtotal = ids.reduce((sum, id) => {
+    const p = products.find(x => x.id == id);
+    return sum + (p ? p.price * cart[id] : 0);
+  }, 0);
+  footer.innerHTML = `
+    <div class="cart-total"><span>Subtotal</span><strong>₹${subtotal}</strong></div>
+    <div class="cart-total" style="font-size:.85rem; color:var(--text-light)"><span>Delivery</span><span style="color:var(--green); font-weight:600">FREE</span></div>
+    <button class="btn btn-primary" style="width:100%; justify-content:center; padding:14px;" onclick="checkout()">Proceed to Checkout →</button>`;
+}
+function removeFromCart(id) {
+  delete cart[id];
+  updateQtyUI(id);
+  updateCartCount();
+  renderCartPanel();
+}
+function checkout() {
+  showToast('🎉 Order placed successfully!');
+  cart = {};
+  updateCartCount();
+  renderCartPanel();
+  renderProducts(currentFilter);
+  setTimeout(() => toggleCart(), 1200);
+}
+
+// ── FILTER ──
+function filterProducts(cat, btn) {
+  currentFilter = cat;
+  renderProducts(cat);
+  if (btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
+}
+
+// ── WISHLIST ──
+function wishlist(id) {
+  showToast('💚 Added to wishlist!');
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── NEWSLETTER ──
+function subscribe(e) {
+  e.preventDefault();
+  showToast('🎉 Subscribed! Welcome to HarvestFresh!');
+  e.target.reset();
+}
+
+// ── MOBILE NAV ──
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+
+// ── SCROLL EFFECTS ──
+window.addEventListener('scroll', () => {
+  document.getElementById('header').classList.toggle('scrolled', window.scrollY > 40);
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight - 60) {
+      el.classList.add('visible');
+    }
+  });
+});
+
+// ── INIT ──
+renderProducts();
+renderDeals();
+// Trigger initial reveal check
+setTimeout(() => {
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight - 60) el.classList.add('visible');
+  });
+}, 100);
+</script>
+</body>
+</html>
